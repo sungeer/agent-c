@@ -1,10 +1,8 @@
-from langchain_core.messages import BaseMessage, SystemMessage
+from langchain_core.messages import BaseMessage
 
 
 class ShortTerm:
-    """保存对话历史，控制上限，防止超过 token 限制。
-    system 消息永远保留，超出上限时删除最旧的非 system 消息。
-    """
+    """短期记忆，保存对话历史，控制上限，防止超过 token 限制。"""
 
     def __init__(self, max_messages: int = 20) -> None:
         self.max_messages = max_messages
@@ -15,14 +13,10 @@ class ShortTerm:
         self._trim()
 
     def _trim(self) -> None:
-        """超过上限时，删除最旧的非 system 消息。"""
-        non_system_count = sum(1 for m in self._messages if not isinstance(m, SystemMessage))
-        if non_system_count <= self.max_messages:
+        """超过上限时，丢掉最旧的消息。"""
+        if len(self._messages) <= self.max_messages:
             return
-        for i, msg in enumerate(self._messages):
-            if not isinstance(msg, SystemMessage):
-                self._messages.pop(i)
-                return
+        self._messages.pop(0)
 
     def get_messages(self) -> list[BaseMessage]:
         return list(self._messages)
