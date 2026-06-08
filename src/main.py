@@ -1,6 +1,7 @@
 import logging
 
 from src.agent import run_agent
+from src.memory import ShortTerm
 
 
 def main() -> None:
@@ -10,7 +11,9 @@ def main() -> None:
     )
 
     print(f'* An agentic tool that lives in your terminal.')
-    print(f'* Press /exit to quit')
+    print(f'* Press /exit to quit, /clear to clear memory')
+
+    memory = ShortTerm()
 
     while True:
         try:
@@ -26,6 +29,11 @@ def main() -> None:
             print('\nBye！')
             break
 
-        result = run_agent(user_input)
+        if user_input.lower() == '/clear':
+            memory.clear()
+            print('记忆已清除，开始新对话。')
+            continue
+
+        result = run_agent(user_input, memory)
 
         print(f'Agent: {result}')
