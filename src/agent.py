@@ -51,11 +51,4 @@ def run_agent(user_input: str, memory: ShortTerm) -> str:
 
     log.warning('工具调用达到上限 3 轮，本轮中断')
 
-    messages = [SystemMessage(content=system_prompt)] + memory.get_messages()
-    messages.append(HumanMessage(content='请根据已有的工具返回信息，简洁地回答用户的问题。'))
-    
-    response = llm.invoke(messages)
-    
-    memory.add(response)
-    
-    return response.content or ''
+    return '已达工具调用上限（3 轮），本轮中断。可以回复「继续」接着做。'
